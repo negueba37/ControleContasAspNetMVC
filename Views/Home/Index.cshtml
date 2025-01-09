@@ -1,0 +1,247 @@
+﻿@using System.Globalization
+@using ControleContas.ViewModels
+@model HomeViewModel
+@{
+	ViewData["Title"] = "Dashboard";
+}
+<div class="row">
+	<div class="container">
+		<label for="month" class="form-label col-6">
+			Mês
+			<select asp-for="@Model.Month" class="form-control" id="month" aria-label="Selecione um mês">
+				@for (var i = 1; i <= 12; i++)
+				{
+					<option value="@i">@CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i)</option>
+				}
+			</select>
+		</label>
+		<label for="year" class="form-label col-6">
+			Ano
+			<select asp-for="@Model.Year" class="form-control" id="year" aria-label="Selecione um ano">
+				@for (var i = 2024; i <= 2026; i++)
+				{
+					<option value="@i">@i</option>
+				}
+			</select>
+		</label>
+		<button class="btn btn-outline-primary" onclick="OnClickPesquisar(this)">
+			Pesquisar
+		</button>
+		<label for="card" class="form-label col-6">
+			Cartão
+			<select class="form-control" id="card" aria-label="Selecione um Cartão">
+				<option value="0">Todos</option>
+				@foreach (var item in Model.Cards())
+				{
+					<option value="@item.Id">@item.Description</option>
+				}
+			</select>
+		</label>
+		<label for="user" class="form-label col-5">
+			Usuário
+			<select asp-for="@Model.Year" class="form-control" id="user" aria-label="Selecione um mês">
+				@for (var i = 2024; i <= 2026; i++)
+				{
+					<option value="@i">@i</option>
+				}
+			</select>
+		</label>
+	</div>
+</div>
+<div>
+	<div class="row">
+		<div class="col-3 pt-4">
+			<div class="card">
+				<div class="card-body">
+					<h5 class="card-title">Boletos</h5>
+					<h6 class="card-subtitle mb-2 text-body-secondary">Total gasto</h6>
+					<p class="card-text">@Model.TotalInstallmentBankSlip().ToString("N2", new CultureInfo("pt-BR"))</p>
+					<a href="#" class="btn btn">Ver detalhes</a>
+					<a href="#" class="card-link">Another link</a>
+				</div>
+			</div>
+		</div>
+		@foreach(var item in Model.Cards())
+		{
+		
+		<div class="col-3 pt-4">
+			<div class="card">
+				<div class="card-body">
+					<h5 class="card-title">@item.Description</h5>
+					<h6 class="card-subtitle mb-2 text-body-secondary">Total gasto</h6>
+						<p class="card-text">@Model.TotalInstallmentCard(item.Id).ToString("N2", new CultureInfo("pt-BR"))</p>
+					<a href="#" class="btn btn">Ver detalhes</a>
+					<a href="#" class="card-link">Another link</a>
+				</div>
+			</div>
+		</div>
+		}
+		<h3>Total de gastos: @Model.TotalExpenses().ToString("N2", new CultureInfo("pt-BR"))</h3>
+	</div>
+</div>
+
+@if (Model.InstallmentsBankSlip.Count() > 0)
+{	
+	<h3>Boletos</h3>
+	
+	<table class="table">
+		<thead class="thead-dark">
+			<tr>
+				<th scope="col">Parcela</th>
+				<th scope="col">Descrição</th>
+				<th scope="col">Compra</th>
+				<th scope="col">Vencimento</th>
+				<th scope="col">Pago</th>
+				<th class="text-end" scope="col">Valor</th>
+				<th class="text-end" scope="col">Pagamento</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in Model.InstallmentsBankSlip)
+			{
+				<tr>
+					<th scope="row">@item.NumeberInstalment/@item.BankSlip.InstallmentQuantity</th>
+					<td>@item.BankSlip.Description</td>
+					<td>@item.BankSlip.Date.ToString("d")</td>
+					<td>@item.Due.ToString("d")</td>
+					@if (@item.IsPaid)
+					{
+						<td>Sim</td>
+					}else
+					{
+						<td>Não</td>					
+					}					
+					<td class="text-end">@item.Price.ToString("N2", new CultureInfo("pt-BR"))</td>
+					<td class="text-end">
+						<button type="button" onclick="OnClickOpenBoleto(this)" data-id-bolete="@item.Id" data-vencimento-bolete="@item.Due.ToString("d")" data-valor-bolete="@item.Price.ToString("F2")" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
+						Pagar
+					</button>
+					</td>
+				</tr>
+			}
+		</tbody>
+		<tfoot>
+			<tr>
+				<td colspan="6" class="text-end">
+					<span class="text-danger">@Model.TotalInstallmentBankSlip().ToString("N2", new CultureInfo("pt-BR"))</span>
+				</td>
+			</tr>
+		</tfoot>
+	</table>
+
+}
+
+@if (Model.Installments.Count() > 0)
+{
+	<h3>Cartão de credito</h3>
+	<table class="table">
+		<thead class="thead-dark">
+			<tr>
+				<th scope="col">Parcela</th>
+				<th scope="col">Descrição</th>
+				<th scope="col">Compra</th>
+				<th scope="col">Vencimento</th>
+				<th scope="col">Cartão</th>
+				<th class="text-end" scope="col">Valor</th>
+				<th class="text-end" scope="col">...</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in Model.Installments)
+			{
+				<tr>
+					<th scope="row">@item.NumeberInstalment/@item.Account.InstallmentQuantity</th>
+					<td>@item.Account.Description</td>
+					<td>@item.Account.Date.ToString("d")</td>
+					<td>@item.Due.ToString("d")</td>
+					<td>@item.Account.Card.Description</td>
+					<td class="text-end">@item.Price.ToString("N2", new CultureInfo("pt-BR"))</td>
+					<td class="text-end"><a class="btn btn-info" href="#">...</a></td>
+
+				</tr>
+			}
+		</tbody>
+		<tfoot>
+			<tr>
+				<td colspan="6" class="text-end">
+					<span class="text-danger">@Model.TotalInstallment().ToString("N2", new CultureInfo("pt-BR"))</span>
+				</td>
+			</tr>
+		</tfoot>
+	</table>
+
+}
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<form id="form-update-payment" asp-action="UpdatePayment" asp-controller="Home" method="post" asp-route-name="Teste" asp-route-id="25">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Pagamento de boletos</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+
+				<div class="row">
+					<div class="container p-4 col-12">
+						<input hidden type="text" data-id-parcela="" class="form-control" id="idInstallment">
+						<p>Marcar boleto como pago ?</p>
+					</div>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+					<button type="submit" class="btn btn-success">Sim</button>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
+
+<script>
+	function OnClickPesquisar(event) {
+		const inputMonth = document.getElementById('month');
+		const inputYear = document.getElementById('year');
+		const inputCard = document.getElementById('card');
+
+		const urlParams = new URL(window.location);
+
+		urlParams.searchParams.set('month', inputMonth.value);
+		urlParams.searchParams.set('year', inputYear.value);
+		urlParams.searchParams.set('card', inputCard.value);
+
+		window.location.href = urlParams;
+
+	}
+
+	function OnClickOpenBoleto(event)
+	{
+		//console.log(event.getAttribute("data-id-bolete"));
+		//document.getElementById("idInstallment").setAttribute("asp-for") = event.getAttribute("data-id-bolete");
+		console.log(document.getElementById("user"));
+		
+		
+
+	}
+	const inputMonth = document.getElementById('month');
+	const inputYear = document.getElementById('year');
+	const inputCard = document.getElementById('card');
+	const today = new Date();
+	const urlParams = new URLSearchParams(window.location.search);
+
+	// Para acessar um parâmetro específico:
+	var paramMonth = urlParams.get('month');
+	var paramYear = urlParams.get('year');
+	var paramCard = urlParams.get('card');
+
+	if (paramMonth == null)
+		paramMonth = today.getMonth() + 1;
+	if (paramYear == null)
+		paramYear = today.getFullYear();
+	if (paramCard == null)
+		paramCard = 0;
+
+	inputMonth.value = paramMonth;
+	inputYear.value = paramYear;
+	inputCard.value = paramCard;
+</script>

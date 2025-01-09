@@ -1,0 +1,64 @@
+﻿@using ControleContas.ViewModels
+@model BankSlipViewModel
+<h3>Boletos</h3>
+@{
+	ViewData["Title"] = "Boletos";
+}
+<div class="row">
+
+	@if (Model.IsError)
+
+	{
+		<div class="alert alert-danger" role="alert">
+			Erro na aplicação
+		</div>
+	}
+	<form asp-action="New" asp-controller="BankSlip" class="container">
+
+		<label for="description" class="form-label col-6">
+			Descrição
+			<input asp-for="BankSlip.Description" type="text" class="form-control" id="description">
+		</label>
+
+		<label for="price" class="form-label col-5">
+			Valor
+			<input asp-for="BankSlip.Price" type="text" class="form-control" id="preice">
+		</label>
+
+
+		<label for="userId" class="form-label col-3">
+			Usuário
+			<select asp-for="BankSlip.UserId" class="form-control" id="userId" aria-label="Selecione um cartão">
+				@foreach (var item in @Model.Users)
+				{
+					<option value="@item.Id">@item.Name</option>
+				}
+			</select>
+		</label>
+		<label for="date" class="form-label col-2">
+			Data da Compra
+			<input asp-for="BankSlip.Date" type="date" class="form-control" id="inputDate">
+		</label>
+		<label for="date" class="form-label col-2">
+			Data do vencimento
+			<input asp-for="BankSlip.Due" type="date" class="form-control" id="inputDue">
+		</label>
+		<label for="installment" class="form-label col-2">
+			Qt. de parcelas
+			<input asp-for="BankSlip.InstallmentQuantity" type="number" class="form-control" id="installment">
+		</label>
+
+		<button type="submit" class="btn btn-primary">Gravar</button>
+	</form>
+</div>
+<script>
+	const inputDate = document.getElementById('inputDate');
+	const inputDue = document.getElementById('inputDue');
+	const inputInstallment = document.getElementById('installment');
+	const today = new Date();
+	const formattedDate = today.toISOString().substring(0, 10);
+	inputDate.value = formattedDate;
+	inputDue.value = formattedDate;
+	inputInstallment.value = "1";
+</script>
+

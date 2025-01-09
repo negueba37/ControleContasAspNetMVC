@@ -1,0 +1,50 @@
+﻿@using ConsoleData.DTO
+@model IEnumerable<CardDTO>
+<h3>Cartões</h3>
+<ul class="list-group">
+	@foreach (var item in Model)
+	{
+        <li class="list-group-item d-flex justify-content-between">
+            @item.Description
+            <div class="d-flex">
+                <a class="btn btn-outline-dark mx-lg-2" asp-action="Edit" asp-route-id="@item.Id" asp-controller="Card">Editar</a>
+                <button type="button" onclick="OnClickRecuperarId(this)" data-id-card="@item.Id" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    Excluir
+                </button>
+            </div>
+        </li>
+	}
+</ul>
+<a asp-action="New" asp-controller="Card" class="btn btn-primary mt-3">
+    Novo Cartão
+</a>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Excluir</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                
+                <p>Tem certeza que deseja excluir esse cartão ?</p>
+                <p hidden id="mensagemExcluir"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" onclick="OnClickDeletarItem()" class="btn btn-primary">Sim</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function OnClickRecuperarId(event)
+    {       
+        document.querySelector('#mensagemExcluir').textContent = event.getAttribute('data-id-card')
+    }
+    function OnClickDeletarItem(event) {        
+        window.location.href = "/Card/Delete/" + document.querySelector('#mensagemExcluir').textContent
+    }
+</script>

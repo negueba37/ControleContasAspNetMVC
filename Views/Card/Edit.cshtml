@@ -1,0 +1,25 @@
+﻿@using ConsoleData.DTO
+@model CardDTO
+
+<form asp-action="Edit" asp-controller="Card">
+    <div class="mb-3">
+        <label for="description" class="form-label">Descrição</label>
+        <input asp-for="Description" type="text" class="form-control" id="description">
+
+    </div>
+    <div class="mb-3">
+        <label for="limit" class="form-label">Limite</label>
+        <input asp-for="Limit" type="text" class="form-control" id="limit">
+    </div>
+    <div class="mb-3">
+        <label for="Maturity" class="form-label">Vencimento</label>
+        <input asp-for="MaturityDay" type="number" class="form-control" id="Maturity">
+    </div>
+    <div class="mb-3">
+        <label for="melhorDiaCompra" class="form-label">Melhor dia de compra</label>
+        <input asp-for="BestPurchaseDay" type="number" class="form-control" id="melhorDiaCompra">
+    </div>
+    <button type="submit" class="btn btn-primary">Gravar</button>
+  
+
+</form>

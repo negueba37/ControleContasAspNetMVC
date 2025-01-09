@@ -1,0 +1,128 @@
+﻿@using ControleContasData.DTO
+@using System.Globalization
+@model AccountDTO
+
+<h3>Visualizar conta</h3>
+<div class="container">
+
+
+	<div class="row">
+
+		
+		<input hidden asp-for="Id" type="text" class="form-control" id="id">
+		
+		<label for="description" class="form-label col-6">
+			Descrição
+			<input disabled asp-for="Description" type="text" class="form-control" id="description">
+		</label>
+
+		<label for="price" class="form-label col-6">
+			Valor
+			<input disabled asp-for="Price" type="text" class="form-control" id="preice">
+		</label>
+
+
+		<label for="cardId" class="form-label col-md-6">
+			Cartão
+			<select disabled asp-for="CardId" id="cardId" class="form-control" aria-label="Selecione um cartão">
+				<option value="CardId">@Model.Card.Description</option>
+			</select>
+		</label>
+
+
+
+		<label for="date" class="form-label col-3">
+			Data da conta
+			<input disabled asp-for="Date" type="date" class="form-control" id="date">
+		</label>
+		<label for="installment" class="form-label col-3">
+			Quantidade de parcelas
+			<input disabled asp-for="InstallmentQuantity" type="number" class="form-control" id="installment">
+		</label>
+		<table class="table table-striped">
+
+			<thead>
+				<tr>
+					<th scope="col">Parcela</th>
+					<th scope="col">Vencimento</th>
+					<th scope="col">Valor</th>
+					<th scope="col" class="text-end p">Ação</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in Model.Installments)
+				{
+					<tr>
+
+						<td>@item.NumeberInstalment</td>
+						<td>@item.Due.ToString("d")</td>
+						<td>@item.Price.ToString("N2", new CultureInfo("pt-BR"))</td>
+						<td class="text-end">
+							<button type="button" onclick="OnClickOpenParcela(this)" data-id-parcela="@item.Id" data-vencimento-parcela="@item.Due.ToString("d")" data-valor-parcela="@item.Price.ToString("F2")" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
+								Editar
+							</button>
+						</td>
+					</tr>
+				}
+			</tbody>
+
+		</table>
+	</div>
+</div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Editar parcela</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+
+			<div class="row">
+				<div class="container p-4 col-12">
+					<input hidden type="text" class="form-control" id="idInstallment">
+					<label for="dateVencimento" class="form-label col-6">
+						Vencimento
+						<input type="date" class="form-control" id="dateVencimento">
+					</label>
+
+					<label for="valueParcela" class="form-label col-6">
+						Valor
+						<input type="text" class="form-control" id="valueParcela">
+					</label>
+				</div>
+			</div>
+
+			<div class="modal-footer">
+				<button type="button" onclick="" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+				<button type="button" onclick="OnClickEditarParcela()" class="btn btn-primary">Gravar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+<script>
+	function OnClickEditarParcela() {
+		const id = document.querySelector('#id').value
+		const idParcela = document.querySelector('#idInstallment').value
+		const dataVencimento = document.querySelector('#dateVencimento').value
+		const valorParcela = document.querySelector('#valueParcela').value.replace(".", "").replace(",", ".")
+		
+		window.location.href = `/Account/EditInstallment?id=${id}&idParcela=${idParcela}&valor=${valorParcela}&data=${dataVencimento}`
+	}
+	function OnClickOpenParcela(event) {
+		const inputIdParcela = document.querySelector('#idInstallment')
+		const inputDataVencimento = document.querySelector('#dateVencimento')
+		const inputValorParcela = document.querySelector('#valueParcela')
+
+		const dateString = event.getAttribute('data-vencimento-parcela');
+		const [day, month, year] = dateString.split("/");
+		const dateVencimento = new Date(year, month - 1, day);
+
+		inputDataVencimento.value = dateVencimento.toISOString().substring(0, 10);
+		inputIdParcela.value = event.getAttribute('data-id-parcela')
+		inputValorParcela.value = event.getAttribute('data-valor-parcela')
+	}
+</script>

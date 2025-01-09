@@ -1,0 +1,133 @@
+﻿@using ControleContas.ViewModels
+@using ControleContasData.DTO
+@using System.Globalization
+@model AccountFilterViewModel
+<h1>Contas</h1>
+<div class="row">
+	<div class="container-md">
+		<label for="month" class="form-label col-6">
+			Mês
+			<select asp-for="@Model.Month" class="form-control" id="month" aria-label="Selecione um mês">
+				@for (var i = 1; i <= 12; i++)
+				{
+					<option value="@i">@CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i)</option>
+				}
+			</select>
+		</label>
+		<label for="year" class="form-label col-5">
+			Ano
+			<select asp-for="@Model.Year" class="form-control" id="year" aria-label="Selecione um mês">
+				@for (var i = 2024; i <= 2026; i++)
+				{
+					<option value="@i">@i</option>
+				}
+			</select>
+		</label>
+		<button class="btn btn-outline-primary" onclick="OnClickPesquisar(this)">
+			Pesquisar
+		</button>
+	</div>
+</div>
+<a asp-action="New" asp-controller="Account" class="btn btn-primary mb-3 mt-3">
+	Nova Conta
+</a>
+
+<table class="table">
+	<thead class="thead-dark">
+		<tr>
+			<th scope="col">Qt. Parcela</th>
+			<th scope="col">Descrição</th>
+			<th scope="col">Dt. Compra</th>
+			<th scope="col">Cartão</th>
+			<th class="text-end" scope="col">Valor</th>
+			<th class="text-end" scope="col">...</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in Model.Accounts)
+		{
+			<tr>
+				<th scope="row">@item.InstallmentQuantity</th>
+				<td>@item.Description</td>
+				<td>@item.Date.ToString("d")</td>
+				<td>@item.Card.Description</td>
+				<td class="text-end">@item.Price.ToString("N2", new CultureInfo("pt-BR"))</td>
+				<td class="text-end">
+					<div class="d-flex">
+						<a asp-action="Edit" asp-route-id="@item.Id" asp-controller="Account" class="btn btn-outline-dark mx-lg-2">Visualizar</a>
+
+						<button type="button" onclick="OnClickRecuperarId(this)" data-id-account="@item.Id" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
+							Excluir
+						</button>
+					</div>
+
+				</td>
+
+			</tr>
+		}
+	</tbody>
+	<tfoot>
+		<tr>
+			<td colspan="6" class="text-end">
+				<span class="text-danger">$$$$</span>
+			</td>
+		</tr>
+	</tfoot>
+</table>
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Excluir</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+
+				<p>Tem certeza que deseja excluir essa conta?</p>
+				<p hidden id="mensagemExcluir"></p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+				<button type="button" onclick="OnClickDeletarItem()" class="btn btn-primary">Sim</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	const inputMonth = document.getElementById('month');
+	const inputYear = document.getElementById('year');
+	const today = new Date();
+	const urlParams = new URLSearchParams(window.location.search);
+
+	// Para acessar um parâmetro específico:
+	var paramMonth = urlParams.get('month');
+	var paramYear = urlParams.get('year');
+
+	if (paramMonth == null)
+		paramMonth = today.getMonth() + 1;
+	if (paramYear == null)
+		paramYear = today.getFullYear();
+
+	inputMonth.value = paramMonth;
+	inputYear.value = paramYear;
+
+	function OnClickPesquisar(event) 
+	{
+		const inputMonth = document.getElementById('month');
+		const inputYear = document.getElementById('year');
+		const urlParams = new URL(window.location);
+		urlParams.searchParams.set('month', inputMonth.value);
+		urlParams.searchParams.set('year', inputYear.value);		
+		window.location.href = urlParams;
+	}
+
+	function OnClickRecuperarId(event) {
+		document.querySelector('#mensagemExcluir').textContent = event.getAttribute('data-id-account')
+	}
+	function OnClickDeletarItem(event) {
+		window.location.href = "/Account/Delete/" + document.querySelector('#mensagemExcluir').textContent
+	}
+</script>

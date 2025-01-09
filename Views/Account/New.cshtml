@@ -1,0 +1,68 @@
+﻿@using ControleContas.ViewModels
+@model AccountCardViewModel
+
+<div class="row">
+
+	@if (Model.IsError)
+	
+	{
+		<div class="alert alert-danger" role="alert">
+			Erro na aplicação
+		</div>
+	}
+	<form asp-action="New" asp-controller="Account" class="container-fluid col-12">
+
+		<div>
+			<label for="description" class="form-label col-6">
+				Descrição
+				<input asp-for="Account.Description" type="text" class="form-control" id="description">
+			</label>
+
+			<label for="price" class="form-label col-5">
+				Valor
+				<input asp-for="Account.Price" type="text" class="form-control" id="preice">
+			</label>
+		</div>
+		<div>
+			<label for="card" class="form-label col-5">
+				Cartão
+				<select asp-for="Account.CardId" id="card" class="form-control" aria-label="Selecione um cartão">
+					
+					@foreach (var item in @Model.Cards)
+					{
+						<option value="@item.Id">@item.Description</option>
+					}
+				</select>
+			</label>
+
+			<label for="userId" class="form-label col-6">
+				Usuário
+				<select asp-for="Account.UserId" class="form-control" id="userId" aria-label="Selecione um cartão">
+					@foreach (var item in @Model.Users)
+					{
+						<option value="@item.Id">@item.Name</option>
+					}
+				</select>
+			</label>
+
+			<label for="date" class="form-label col-3">
+				Data da conta
+				<input asp-for="Account.Date" type="date" class="form-control" id="inputDate">
+			</label>
+			<label for="installment" class="form-label col-2">
+				Quantidade de parcelas
+				<input asp-for="Account.InstallmentQuantity" type="number" class="form-control" id="installment">
+			</label>
+		</div>
+		<button type="submit" class="btn btn-primary">Gravar</button>
+	</form>
+</div>
+<script>
+	const inputDate = document.getElementById('inputDate');
+	const inputInstallment = document.getElementById('installment');
+	const today = new Date();
+	const formattedDate = today.toISOString().substring(0, 10);
+	console.log(formattedDate);
+	inputDate.value = formattedDate;
+	inputInstallment.value = "1";
+</script>
