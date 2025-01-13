@@ -11,12 +11,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Console\Shared.Data\Shared.Data.csproj" />
+    <Folder Include="ViewComponents\" />
+    <Folder Include="Views\Shared\Components\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ViewComponents\" />
-    <Folder Include="Views\Shared\Components\" />
+    <PackageReference Include="Google.DataTable.Net.Wrapper" Version="4.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Console\ControleContasShared\Shared.Data.csproj" />
   </ItemGroup>
 
 </Project>

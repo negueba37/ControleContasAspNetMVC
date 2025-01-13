@@ -33,7 +33,7 @@ namespace ControleContas.Controllers
 			return View(homeViewModel);
 		}
 
-		public IActionResult Privacy()
+		public IActionResult DashboardAnual()
 		{
 			return View();
 		}
@@ -42,11 +42,19 @@ namespace ControleContas.Controllers
 		{
 			return View();
 		}
-
+		
 		public IActionResult UpdatePayment() 
 		{
 
 			return View("Index");
+		}
+		[HttpPost]
+		public void UpdateIsPaidInstallment(int installment) 
+		{
+			var installmentDTO = _instalmentRepository.GetById(installment);
+			installmentDTO.IsPaid = true;
+			_instalmentRepository.Update(installmentDTO);
+			
 		}
 
 		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

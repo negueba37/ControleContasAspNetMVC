@@ -6,6 +6,7 @@
 }
 <div class="row">
 	<div class="container">
+		<label id="id-boleto-selecionado" hidden></label>
 		<label for="month" class="form-label col-6">
 			Mês
 			<select asp-for="@Model.Month" class="form-control" id="month" aria-label="Selecione um mês">
@@ -106,10 +107,10 @@
 					<td>@item.Due.ToString("d")</td>
 					@if (@item.IsPaid)
 					{
-						<td>Sim</td>
+						<td id="td-pago-@item.Id">Sim</td>
 					}else
 					{
-						<td>Não</td>					
+						<td id="td-pago-@item.Id">Não</td>
 					}					
 					<td class="text-end">@item.Price.ToString("N2", new CultureInfo("pt-BR"))</td>
 					<td class="text-end">
@@ -174,7 +175,8 @@
 
 
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<form id="form-update-payment" asp-action="UpdatePayment" asp-controller="Home" method="post" asp-route-name="Teste" asp-route-id="25">
+	<!--<form id="form-update-payment" asp-action="UpdatePayment" asp-controller="Home" method="post" asp-route-name="Teste" asp-route-id="25">-->
+		<form id="form-update-payment" asp-action="UpdatePayment" asp-controller="Home" method="post" asp-route-name="Teste" asp-route-id="25">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -191,7 +193,7 @@
 
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-					<button type="submit" class="btn btn-success">Sim</button>
+					<button type="button" onclick="MarcarBoletoPago()" class="btn btn-success">Sim</button>
 				</div>
 			</div>
 		</div>
@@ -217,11 +219,41 @@
 	function OnClickOpenBoleto(event)
 	{
 		//console.log(event.getAttribute("data-id-bolete"));
-		//document.getElementById("idInstallment").setAttribute("asp-for") = event.getAttribute("data-id-bolete");
-		console.log(document.getElementById("user"));
-		
-		
+		document.getElementById("id-boleto-selecionado").textContent = event.getAttribute("data-id-bolete");
+		console.log("boleto:" + document.getElementById("id-boleto-selecionado").textContent);
+		var id = "td-pago-" + event.getAttribute("data-id-bolete");
+		//console.log(id);
+		//console.log(document.getElementById(id).textContent);
+		//console.log(document.getElementById("user"));				
 
+	}
+	function MarcarBoletoPago() 
+	{
+		var id = document.getElementById("id-boleto-selecionado").textContent;
+		console.log(id)
+		fetch('/Home/UpdateIsPaidInstallment?installment=' + id, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json', // Informa que está enviando JSON
+				'X-CSRF-TOKEN': document.querySelector('[name="__RequestVerificationToken"]').value // Para segurança (se estiver usando anti-CSRF no ASP.NET)
+			}			
+		}).then(response => {
+			if (!response.ok) {
+				throw new Error(`Erro HTTP: ${response.status}`);
+			}
+			return response.json(); // Converte a resposta para JSON
+		})
+			.then(data => {
+				if (data.sucesso) {
+					alert(data.mensagem);
+				} else {
+					alert('Erro: ' + data.mensagem);
+				}
+			})
+			.catch(error => {
+				console.error('Erro na requisição:', error);
+				alert('Erro na requisição: ' + error.message);
+			});
 	}
 	const inputMonth = document.getElementById('month');
 	const inputYear = document.getElementById('year');

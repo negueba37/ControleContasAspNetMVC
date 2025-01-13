@@ -31,6 +31,15 @@
           "lib/netstandard2.1/AutoMapper.Extensions.Microsoft.DependencyInjection.dll": {}
         }
       },
+      "Google.DataTable.Net.Wrapper/4.1.0": {
+        "type": "package",
+        "compile": {
+          "lib/net5.0/Google.DataTable.Net.Wrapper.dll": {}
+        },
+        "runtime": {
+          "lib/net5.0/Google.DataTable.Net.Wrapper.dll": {}
+        }
+      },
       "Microsoft.CSharp/4.7.0": {
         "type": "package",
         "compile": {
@@ -354,6 +363,27 @@
         "automapper.extensions.microsoft.dependencyinjection.nuspec",
         "icon.png",
         "lib/netstandard2.1/AutoMapper.Extensions.Microsoft.DependencyInjection.dll"
+      ]
+    },
+    "Google.DataTable.Net.Wrapper/4.1.0": {
+      "sha512": "/Dztq6kmia5EDou7xEAtm+yEFYQiso4fQrQ9c2V68p4TryEVdL46ipT+3jXN95HjTejHgC3DSHAVfalkdaYnSA==",
+      "type": "package",
+      "path": "google.datatable.net.wrapper/4.1.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "License/LICENSE.txt",
+        "google.datatable.net.wrapper.4.1.0.nupkg.sha512",
+        "google.datatable.net.wrapper.nuspec",
+        "lib/net40/Google.DataTable.Net.Wrapper.dll",
+        "lib/net45/Google.DataTable.Net.Wrapper.dll",
+        "lib/net452/Google.DataTable.Net.Wrapper.dll",
+        "lib/net46/Google.DataTable.Net.Wrapper.dll",
+        "lib/net461/Google.DataTable.Net.Wrapper.dll",
+        "lib/net5.0/Google.DataTable.Net.Wrapper.dll",
+        "lib/netcoreapp2.0/Google.DataTable.Net.Wrapper.dll",
+        "lib/netcoreapp2.1/Google.DataTable.Net.Wrapper.dll",
+        "lib/netstandard2.0/Google.DataTable.Net.Wrapper.dll"
       ]
     },
     "Microsoft.CSharp/4.7.0": {
@@ -862,12 +892,13 @@
     },
     "Shared.Data/1.0.0": {
       "type": "project",
-      "path": "../../Console/Shared.Data/Shared.Data.csproj",
-      "msbuildProject": "../../Console/Shared.Data/Shared.Data.csproj"
+      "path": "../../Console/ControleContasShared/Shared.Data.csproj",
+      "msbuildProject": "../../Console/ControleContasShared/Shared.Data.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net8.0": [
+      "Google.DataTable.Net.Wrapper >= 4.1.0",
       "Shared.Data >= 1.0.0"
     ]
   },
@@ -877,11 +908,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Projetos\\CSharp\\AspNetMVC\\ControleContas\\ControleContas.csproj",
+      "projectUniqueName": "C:\\Projetos\\CSharp\\AspNetMVC\\ControleContasMVC\\ControleContas.csproj",
       "projectName": "ControleContas",
-      "projectPath": "C:\\Projetos\\CSharp\\AspNetMVC\\ControleContas\\ControleContas.csproj",
+      "projectPath": "C:\\Projetos\\CSharp\\AspNetMVC\\ControleContasMVC\\ControleContas.csproj",
       "packagesPath": "C:\\Users\\Notebook57436\\.nuget\\packages\\",
-      "outputPath": "C:\\Projetos\\CSharp\\AspNetMVC\\ControleContas\\obj\\",
+      "outputPath": "C:\\Projetos\\CSharp\\AspNetMVC\\ControleContasMVC\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Notebook57436\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -899,8 +930,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\Projetos\\CSharp\\Console\\Shared.Data\\Shared.Data.csproj": {
-              "projectPath": "C:\\Projetos\\CSharp\\Console\\Shared.Data\\Shared.Data.csproj"
+            "C:\\Projetos\\CSharp\\Console\\ControleContasShared\\Shared.Data.csproj": {
+              "projectPath": "C:\\Projetos\\CSharp\\Console\\ControleContasShared\\Shared.Data.csproj"
             }
           }
         }
@@ -919,6 +950,12 @@
     "frameworks": {
       "net8.0": {
         "targetAlias": "net8.0",
+        "dependencies": {
+          "Google.DataTable.Net.Wrapper": {
+            "target": "Package",
+            "version": "[4.1.0, )"
+          }
+        },
         "imports": [
           "net461",
           "net462",
