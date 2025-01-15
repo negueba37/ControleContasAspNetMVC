@@ -4,19 +4,19 @@
 @{
 	ViewData["Title"] = "Dashboard";
 }
-<div class="row">
-	<div class="container">
+
+	<div class="row g-0">
 		<label id="id-boleto-selecionado" hidden></label>
-		<label for="month" class="form-label col-6">
+		<label for="month" class="col-md-2">
 			Mês
-			<select asp-for="@Model.Month" class="form-control" id="month" aria-label="Selecione um mês">
+			<select asp-for="@Model.Month" class="form-control" id="month" aria-label="Selecione um mês" >
 				@for (var i = 1; i <= 12; i++)
 				{
 					<option value="@i">@CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i)</option>
 				}
 			</select>
 		</label>
-		<label for="year" class="form-label col-6">
+		<label for="year" class="col-md-2">
 			Ano
 			<select asp-for="@Model.Year" class="form-control" id="year" aria-label="Selecione um ano">
 				@for (var i = 2024; i <= 2026; i++)
@@ -25,12 +25,9 @@
 				}
 			</select>
 		</label>
-		<button class="btn btn-outline-primary" onclick="OnClickPesquisar(this)">
-			Pesquisar
-		</button>
-		<label for="card" class="form-label col-6">
+		<label for="card" class="form-label col-md-2">
 			Cartão
-			<select class="form-control" id="card" aria-label="Selecione um Cartão">
+			<select asp-for="@Model.Cartao" class="form-control" id="card" aria-label="Selecione um Cartão">
 				<option value="0">Todos</option>
 				@foreach (var item in Model.Cards())
 				{
@@ -38,7 +35,7 @@
 				}
 			</select>
 		</label>
-		<label for="user" class="form-label col-5">
+		<label for="user" class="form-label col-md-6">
 			Usuário
 			<select asp-for="@Model.Year" class="form-control" id="user" aria-label="Selecione um mês">
 				@for (var i = 2024; i <= 2026; i++)
@@ -47,8 +44,15 @@
 				}
 			</select>
 		</label>
+	<div class="row mt-3">
+		<div class="col text-end">
+			<button class="btn btn-outline-primary" onclick="OnClickPesquisar(this)">
+				Pesquisar
+			</button>
+		</div>
 	</div>
-</div>
+
+	</div>
 <div>
 	<div class="row">
 		<div class="col-3 pt-4">
@@ -211,7 +215,11 @@
 		urlParams.searchParams.set('month', inputMonth.value);
 		urlParams.searchParams.set('year', inputYear.value);
 		urlParams.searchParams.set('card', inputCard.value);
-
+		
+		localStorage.setItem('dashboard-principal-mes', inputMonth.value);
+		localStorage.setItem('dashboard-principal-ano', inputYear.value);
+		localStorage.setItem('dashboard-principal-cartao', inputCard.value);
+		
 		window.location.href = urlParams;
 
 	}
@@ -267,6 +275,17 @@
 	var paramCard = urlParams.get('card');
 
 	if (paramMonth == null)
+		paramMonth = localStorage.getItem('dashboard-principal-mes');
+	if (paramYear == null)
+		paramYear = localStorage.getItem('dashboard-principal-ano');
+	if (paramCard == null)
+		paramCard = localStorage.getItem('dashboard-principal-cartao');
+	
+	console.log("paramMonth: "+paramMonth);
+	console.log("paramYear: "+paramYear);
+	console.log("paramCard: "+paramCard);
+
+	if (paramMonth == null)
 		paramMonth = today.getMonth() + 1;
 	if (paramYear == null)
 		paramYear = today.getFullYear();
@@ -276,4 +295,9 @@
 	inputMonth.value = paramMonth;
 	inputYear.value = paramYear;
 	inputCard.value = paramCard;
+
+	console.log("paramMonth 2: "+paramMonth);
+	console.log("paramYear 2: "+paramYear);
+	console.log("paramCard 2: "+paramCard);
+	//window.location.href = "/?month="+paramMonth+"&year="+paramYear+"&card="+paramCard
 </script>

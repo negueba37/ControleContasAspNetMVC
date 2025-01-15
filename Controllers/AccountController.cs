@@ -1,8 +1,11 @@
 ﻿using ConsoleData.DTO;
+using ControleContas.Domain;
 using ControleContas.ViewModels;
 using ControleContasData.DTO;
 using ControleContasData.Service;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Data.Domain;
+using Shared.Data.Repositories;
 using Shared.Data.Repositories.Interfaces;
 
 namespace ControleContas.Controllers
@@ -13,26 +16,34 @@ namespace ControleContas.Controllers
 		private readonly ICardRepository _cardRepository;
 		private readonly IUserRepository _userRepository;
 		private readonly IInstalmentRepository _installmentRepository;
+		private readonly IConfigurationParametersRepository _configurationParametersRepository;
 
 		public AccountController(IAccountRepository accountRepository,
 			ICardRepository cardRepository, 
 			IUserRepository userRepository, 
-			IInstalmentRepository installmentRepository)
+			IInstalmentRepository installmentRepository,
+			IConfigurationParametersRepository configurationParametersRepository)
 		{
 			_accountRepository = accountRepository;
 			_cardRepository = cardRepository;
 			_userRepository = userRepository;
 			_installmentRepository = installmentRepository;
-			
+			_configurationParametersRepository = configurationParametersRepository;
 		}
 
 		public IActionResult Index(int month = 0, int year = 0)
 		{
+			var configurationParameters = _configurationParametersRepository.Get();
+			
 			if (month == 0)
-				month = DateTime.Now.Month;
+				month = configurationParameters.AccountMes;
 			if (year == 0)
-				year = DateTime.Now.Year;
+				year = configurationParameters.AccountAno;
 
+			configurationParameters.AccountAno = year;
+			configurationParameters.AccountMes = month;
+
+			_configurationParametersRepository.Update(configurationParameters);
 			AccountFilterViewModel viewModel = new AccountFilterViewModel();
 			viewModel.Accounts = _accountRepository.AccountsByMonthAndYear(month,year);
 			viewModel.Month = month;

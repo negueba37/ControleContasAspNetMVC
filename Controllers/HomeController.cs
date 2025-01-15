@@ -11,23 +11,33 @@ namespace ControleContas.Controllers
 	{
 		private readonly ILogger<HomeController> _logger;
 		private readonly IInstalmentRepository _instalmentRepository;
+		private readonly IConfigurationParametersRepository _configurationParametersRepository;
 
-		public HomeController(ILogger<HomeController> logger, IInstalmentRepository instalmentRepository)
+		public HomeController(ILogger<HomeController> logger, IInstalmentRepository instalmentRepository, IConfigurationParametersRepository configurationParametersRepository)
 		{
 			_logger = logger;
 			_instalmentRepository = instalmentRepository;
+			_configurationParametersRepository = configurationParametersRepository;
 		}
 
 		public IActionResult Index(int month = 0, int year = 0,int card = 0)
 		{
-			if (month == 0) 
-				month = DateTime.Now.Month;
-			if (year == 0)
-				year = DateTime.Now.Year;
+			var configurationParameters = _configurationParametersRepository.Get();
 
+			if (month == 0) 
+				month = configurationParameters.DashboardPrincipalMes;
+			if (year == 0)
+				year = configurationParameters.DashboardPrincipalAno;
+			
+			configurationParameters.DashboardPrincipalMes = month;
+			configurationParameters.DashboardPrincipalAno = year;
+			configurationParameters.DashboardPrincipalCartao = card;
+			
+			_configurationParametersRepository.Update(configurationParameters);
 			HomeViewModel homeViewModel = new HomeViewModel();
 			homeViewModel.Month = month;
 			homeViewModel.Year = year;
+			homeViewModel.Cartao = card;
 			homeViewModel.Installments = _instalmentRepository.GetByMonthMaturity(month, year, card);
 			homeViewModel.InstallmentsBankSlip = _instalmentRepository.GetByMonthMaturity(month, year);
 			return View(homeViewModel);

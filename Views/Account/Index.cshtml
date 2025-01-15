@@ -4,29 +4,32 @@
 @model AccountFilterViewModel
 <h1>Contas</h1>
 <div class="row">
-	<div class="container-md">
-		<label for="month" class="form-label col-6">
-			Mês
-			<select asp-for="@Model.Month" class="form-control" id="month" aria-label="Selecione um mês">
-				@for (var i = 1; i <= 12; i++)
-				{
-					<option value="@i">@CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i)</option>
-				}
-			</select>
-		</label>
-		<label for="year" class="form-label col-5">
-			Ano
-			<select asp-for="@Model.Year" class="form-control" id="year" aria-label="Selecione um mês">
-				@for (var i = 2024; i <= 2026; i++)
-				{
-					<option value="@i">@i</option>
-				}
-			</select>
-		</label>
+	
+	<label for="month" class="form-label col-4">
+		Mês
+		<select asp-for="@Model.Month" class="form-control" id="month" aria-label="Selecione um mês">
+			@for (var i = 1; i <= 12; i++)
+			{
+				<option value="@i">@CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i)</option>
+			}
+		</select>
+	</label>
+	<label for="year" class="form-label col-4">
+		Ano
+		<select asp-for="@Model.Year" class="form-control" id="year" aria-label="Selecione um mês">
+			@for (var i = 2024; i <= 2026; i++)
+			{
+				<option value="@i">@i</option>
+			}
+		</select>
+	</label>
+	
+	<div class="mt-4 col-4">
 		<button class="btn btn-outline-primary" onclick="OnClickPesquisar(this)">
 			Pesquisar
 		</button>
 	</div>
+
 </div>
 <a asp-action="New" asp-controller="Account" class="btn btn-primary mb-3 mt-3">
 	Nova Conta
@@ -107,9 +110,9 @@
 	var paramYear = urlParams.get('year');
 
 	if (paramMonth == null)
-		paramMonth = today.getMonth() + 1;
+		paramMonth = localStorage.getItem('account-mes');
 	if (paramYear == null)
-		paramYear = today.getFullYear();
+		paramYear = localStorage.getItem('account-ano');
 
 	inputMonth.value = paramMonth;
 	inputYear.value = paramYear;
@@ -121,6 +124,10 @@
 		const urlParams = new URL(window.location);
 		urlParams.searchParams.set('month', inputMonth.value);
 		urlParams.searchParams.set('year', inputYear.value);		
+
+		localStorage.setItem('account-mes', inputMonth.value);
+		localStorage.setItem('account-ano', inputYear.value);
+
 		window.location.href = urlParams;
 	}
 
