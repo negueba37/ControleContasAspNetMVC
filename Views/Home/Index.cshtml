@@ -5,7 +5,7 @@
 	ViewData["Title"] = "Dashboard";
 }
 
-	<div class="row g-0">
+	<div class="row">
 		<label id="id-boleto-selecionado" hidden></label>
 		<label for="month" class="col-md-2">
 			Mês
@@ -53,6 +53,7 @@
 	</div>
 
 	</div>
+	<div id="chart_div"></div>
 <div>
 	<div class="row">
 		<div class="col-3 pt-4">
@@ -66,6 +67,7 @@
 				</div>
 			</div>
 		</div>
+
 		@foreach(var item in Model.Cards())
 		{
 		
@@ -204,6 +206,7 @@
 	</form>
 </div>
 
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script>
 	function OnClickPesquisar(event) {
 		const inputMonth = document.getElementById('month');
@@ -299,5 +302,78 @@
 	console.log("paramMonth 2: "+paramMonth);
 	console.log("paramYear 2: "+paramYear);
 	console.log("paramCard 2: "+paramCard);
-	//window.location.href = "/?month="+paramMonth+"&year="+paramYear+"&card="+paramCard
+
+	GetGrafico();
+	function GetGrafico()
+	{	
+		var mes = localStorage.getItem('dashboard-principal-mes');
+		var ano = localStorage.getItem('dashboard-principal-ano');
+		var url = `http://localhost:84/api/Dashboard/Cartoes/${mes}/${ano}`;
+		fetch(url, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json', // Informa que está enviando JSON
+				'X-CSRF-TOKEN': document.querySelector('[name="__RequestVerificationToken"]').value // Para segurança (se estiver usando anti-CSRF no ASP.NET)
+			}			
+		}).then(response => {
+			if (!response.ok) {
+				throw new Error(`Erro HTTP: ${response.status}`);
+			}
+			return response.json(); // Converte a resposta para JSON
+		})
+			.then(data => {				
+				if (data) {
+					exibirGrafico(data);
+				} else {
+					alert('Erro: ' + data.mensagem);
+				}
+			})
+			.catch(error => {
+				console.error('Erro na requisição:', error);
+				alert('Erro na requisição: ' + error.message);
+			});
+	
+
+	}
+	function exibirGrafico(dataJson){
+	
+		
+		google.charts.load('current', {'packages':['corechart']});
+		google.charts.setOnLoadCallback(drawChart);
+
+		
+		
+		function drawChart() {
+
+		  // Create the data table.
+		  var data = new google.visualization.DataTable();
+		  data.addColumn('string', 'Topping');
+		  data.addColumn('number', 'Slices');
+		  var arrayDados = [];
+		  for (const item of dataJson) {
+			  arrayDados.push([item.description, item.value]);
+        	}
+		  
+		  data.addRows(arrayDados);
+		var formatter = new google.visualization.NumberFormat({
+			prefix: 'R$ ',
+			decimalSymbol: ',',
+			groupingSymbol: '.'
+		});
+
+	    formatter.format(data, 1);
+
+		  var options = {'title':'Gastos com cartão',
+						 'width':400,
+						 'height':300};
+
+		  // Instantiate and draw our chart, passing in some options.
+		  var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+		  chart.draw(data, options);
+		}
+	
+	}
+
+
+
 </script>

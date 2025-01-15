@@ -11,14 +11,16 @@ namespace ControleContas.Controllers
 		private readonly IBankSlipRepository _bankSlipRepository;
 		private readonly ICardRepository _cardRepository;
 		private readonly IUserRepository _userRepository;
-
+		private readonly IConfigurationParametersRepository _configurationParametersRepository;
 		public BankSlipController(IBankSlipRepository bankSlipRepository, 
-								  ICardRepository cardRepository, 
-								  IUserRepository userRepository)
+								  ICardRepository cardRepository,
+								  IUserRepository userRepository,
+								  IConfigurationParametersRepository configurationParametersRepository)
 		{
 			_bankSlipRepository = bankSlipRepository;
 			_cardRepository = cardRepository;
 			_userRepository = userRepository;
+			_configurationParametersRepository = configurationParametersRepository;
 		}
 
 		public IActionResult New()
@@ -47,10 +49,17 @@ namespace ControleContas.Controllers
 		}
 		public IActionResult Index(int month = 0, int year = 0)
 		{
+			var configurationParameters = _configurationParametersRepository.Get();
+
 			if (month == 0)
-				month = DateTime.Now.Month;
+				month = configurationParameters.BankslipMes;
 			if (year == 0)
-				year = DateTime.Now.Year;
+				year = configurationParameters.BankslipAno;
+
+			configurationParameters.AccountAno = year;
+			configurationParameters.AccountMes = month;
+
+			_configurationParametersRepository.Update(configurationParameters);
 
 			BankSlipFilterViewModel viewModel = new BankSlipFilterViewModel();
 			viewModel.BankSlip = _bankSlipRepository.AccountsByMonthAndYear(month,year);

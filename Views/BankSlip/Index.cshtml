@@ -104,9 +104,9 @@
 	var paramYear = urlParams.get('year');
 
 	if (paramMonth == null)
-		paramMonth = today.getMonth() + 1;
+		paramMonth = localStorage.getItem('bankslip-mes');
 	if (paramYear == null)
-		paramYear = today.getFullYear();
+		paramYear = localStorage.getItem('bankslip-ano');
 
 	inputMonth.value = paramMonth;
 	inputYear.value = paramYear;
@@ -118,6 +118,10 @@
 		const urlParams = new URL(window.location);
 		urlParams.searchParams.set('month', inputMonth.value);
 		urlParams.searchParams.set('year', inputYear.value);		
+
+		localStorage.setItem('bankslip-mes', inputMonth.value);
+		localStorage.setItem('bankslip-ano', inputYear.value);
+
 		window.location.href = urlParams;
 	}
 
