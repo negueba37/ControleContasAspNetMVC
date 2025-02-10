@@ -17,18 +17,20 @@ namespace ControleContas.Controllers
 		private readonly IUserRepository _userRepository;
 		private readonly IInstalmentRepository _installmentRepository;
 		private readonly IConfigurationParametersRepository _configurationParametersRepository;
-
+		private readonly ICategoryRepository _categoryRepository;
 		public AccountController(IAccountRepository accountRepository,
 			ICardRepository cardRepository, 
 			IUserRepository userRepository, 
 			IInstalmentRepository installmentRepository,
-			IConfigurationParametersRepository configurationParametersRepository)
+			IConfigurationParametersRepository configurationParametersRepository,
+			ICategoryRepository categoryRepository)
 		{
 			_accountRepository = accountRepository;
 			_cardRepository = cardRepository;
 			_userRepository = userRepository;
 			_installmentRepository = installmentRepository;
 			_configurationParametersRepository = configurationParametersRepository;
+			_categoryRepository = categoryRepository;
 		}
 
 		public IActionResult Index(int month = 0, int year = 0)
@@ -45,7 +47,7 @@ namespace ControleContas.Controllers
 
 			_configurationParametersRepository.Update(configurationParameters);
 			AccountFilterViewModel viewModel = new AccountFilterViewModel();
-			viewModel.Accounts = _accountRepository.AccountsByMonthAndYear(month,year);
+			viewModel.Accounts = _accountRepository.AccountsByMonthAndYear(month,year);			
 			viewModel.Month = month;
 			viewModel.Year = year;
 			return View(viewModel);
@@ -72,8 +74,8 @@ namespace ControleContas.Controllers
             AccountCardViewModel accountViewModel = new AccountCardViewModel();
             accountViewModel.Cards = _cardRepository.Cards();
             accountViewModel.Users = _userRepository.Users();
-
-			return View(accountViewModel);
+			accountViewModel.Categories = _categoryRepository.GetAll();
+            return View(accountViewModel);
         }
         [HttpPost]
         public IActionResult New(AccountCardViewModel accountViewModel)

@@ -4,56 +4,53 @@
 @{
 	ViewData["Title"] = "Dashboard";
 }
-
-	<div class="row">
-		<label id="id-boleto-selecionado" hidden></label>
-		<label for="month" class="col-md-2">
-			Mês
-			<select asp-for="@Model.Month" class="form-control" id="month" aria-label="Selecione um mês" >
-				@for (var i = 1; i <= 12; i++)
-				{
-					<option value="@i">@CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i)</option>
-				}
-			</select>
-		</label>
-		<label for="year" class="col-md-2">
-			Ano
-			<select asp-for="@Model.Year" class="form-control" id="year" aria-label="Selecione um ano">
-				@for (var i = 2024; i <= 2026; i++)
-				{
-					<option value="@i">@i</option>
-				}
-			</select>
-		</label>
-		<label for="card" class="form-label col-md-2">
-			Cartão
-			<select asp-for="@Model.Cartao" class="form-control" id="card" aria-label="Selecione um Cartão">
-				<option value="0">Todos</option>
-				@foreach (var item in Model.Cards())
-				{
-					<option value="@item.Id">@item.Description</option>
-				}
-			</select>
-		</label>
-		<label for="user" class="form-label col-md-6">
-			Usuário
-			<select asp-for="@Model.Year" class="form-control" id="user" aria-label="Selecione um mês">
-				@for (var i = 2024; i <= 2026; i++)
-				{
-					<option value="@i">@i</option>
-				}
-			</select>
-		</label>
-	<div class="row mt-3">
-		<div class="col text-end">
-			<button class="btn btn-outline-primary" onclick="OnClickPesquisar(this)">
-				Pesquisar
-			</button>
-		</div>
+<div class="row">
+	<label id="id-boleto-selecionado" hidden></label>
+	<label for="month" class="col-3 p-0">
+		Mês
+		<select asp-for="@Model.Month" class="form-select" id="month" aria-label="Selecione um mês">
+			@for (var i = 1; i <= 12; i++)
+			{
+				<option value="@i">@CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i)</option>
+			}
+		</select>
+	</label>
+	<label for="year" class="col-3 p-0">
+		Ano
+		<select asp-for="@Model.Year" class="form-select" id="year" aria-label="Selecione um ano">
+			@for (var i = 2024; i <= 2026; i++)
+			{
+				<option value="@i">@i</option>
+			}
+		</select>
+	</label>
+	<label for="card" class="form-label col-3 p-0">
+		Cartão
+		<select asp-for="@Model.Cartao" class="form-select" id="card" aria-label="Selecione um Cartão">
+			<option value="0">Todos</option>
+			@foreach (var item in Model.Cards())
+			{
+				<option value="@item.Id">@item.Description</option>
+			}
+		</select>
+	</label>
+	<label for="user" class="form-label col-3 p-0">
+		Usuário
+		<select asp-for="@Model.Year" class="form-select" id="user" aria-label="Selecione um mês">
+			@for (var i = 2024; i <= 2026; i++)
+			{
+				<option value="@i">@i</option>
+			}
+		</select>
+	</label>
+	
+	<div class="col text-end p-0">
+		<button class="btn btn-outline-primary" onclick="OnClickPesquisar(this)">
+			Pesquisar
+		</button>
 	</div>
-
-	</div>
-	<div id="chart_div"></div>
+</div>
+<div id="chart_div"></div>
 <div>
 	<div class="row">
 		<div class="col-3 pt-4">
@@ -182,7 +179,7 @@
 
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<!--<form id="form-update-payment" asp-action="UpdatePayment" asp-controller="Home" method="post" asp-route-name="Teste" asp-route-id="25">-->
-		<form id="form-update-payment" asp-action="UpdatePayment" asp-controller="Home" method="post" asp-route-name="Teste" asp-route-id="25">
+		<form id="form-update-payment" asp-action="" asp-controller="" method="" asp-route-name="" asp-route-id="">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -229,42 +226,27 @@
 
 	function OnClickOpenBoleto(event)
 	{
-		//console.log(event.getAttribute("data-id-bolete"));
 		document.getElementById("id-boleto-selecionado").textContent = event.getAttribute("data-id-bolete");
-		console.log("boleto:" + document.getElementById("id-boleto-selecionado").textContent);
-		var id = "td-pago-" + event.getAttribute("data-id-bolete");
-		//console.log(id);
-		//console.log(document.getElementById(id).textContent);
-		//console.log(document.getElementById("user"));				
-
 	}
 	function MarcarBoletoPago() 
 	{
 		var id = document.getElementById("id-boleto-selecionado").textContent;
-		console.log(id)
-		fetch('/Home/UpdateIsPaidInstallment?installment=' + id, {
-			method: 'POST',
+		var url = `http://localhost:84/api/Installment/UpdateIsPaid/${id}`		
+		fetch(url, {
+			method: 'PUT',
+			mode: "cors",
 			headers: {
-				'Content-Type': 'application/json', // Informa que está enviando JSON
-				'X-CSRF-TOKEN': document.querySelector('[name="__RequestVerificationToken"]').value // Para segurança (se estiver usando anti-CSRF no ASP.NET)
-			}			
+				'Content-Type': 'application/json' // Informa que está enviando JSON			
+			}
 		}).then(response => {
 			if (!response.ok) {
-				throw new Error(`Erro HTTP: ${response.status}`);
+				console.log(response);
+				alert(`Erro HTTP: ${response.status}`);
 			}
-			return response.json(); // Converte a resposta para JSON
-		})
-			.then(data => {
-				if (data.sucesso) {
-					alert(data.mensagem);
-				} else {
-					alert('Erro: ' + data.mensagem);
-				}
-			})
-			.catch(error => {
-				console.error('Erro na requisição:', error);
-				alert('Erro na requisição: ' + error.message);
-			});
+			var modalEl = document.getElementById('exampleModal');
+			var modal = bootstrap.Modal.getInstance(modalEl); // Obtém a instância do modal
+			modal.hide();
+		});
 	}
 	const inputMonth = document.getElementById('month');
 	const inputYear = document.getElementById('year');
@@ -308,7 +290,7 @@
 	{	
 		var mes = localStorage.getItem('dashboard-principal-mes');
 		var ano = localStorage.getItem('dashboard-principal-ano');
-		var url = `http://localhost:84/api/Dashboard/Cartoes/${mes}/${ano}`;
+		var url = `http://192.168.1.24:84/api/Dashboard/Cartoes/${mes}/${ano}`;
 		fetch(url, {
 			method: 'GET',
 			headers: {

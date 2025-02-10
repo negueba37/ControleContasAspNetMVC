@@ -10,5 +10,7 @@ namespace ControleContas.ViewModels
         public AccountDTO Account { get; set; } 
         public IEnumerable<CardDTO> Cards { get; set; } = new List<CardDTO>();
         public IEnumerable<UserDTO> Users { get; set; } = new List<UserDTO>();
+
+        public IEnumerable<Category> Categories { get; set; } = new List<Category>();
     }
 }

@@ -13,6 +13,7 @@ builder.Services.AddTransient<IInstalmentRepository, InstalmentRepository>();
 builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<IBankSlipRepository, BankSlipRepository>();
 builder.Services.AddTransient<IConfigurationParametersRepository, ConfigurationParametersRepository>();
+builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

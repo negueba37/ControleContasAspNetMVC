@@ -1,0 +1,11 @@
+﻿@using Shared.Data.Domain
+@model Category
+
+<form asp-action="New" asp-controller="Category">
+    <div class="mb-3">
+        <label for="description" class="form-label">Descrição</label>
+        <input asp-for="Description" type="text" class="form-control" id="description">
+
+    </div>
+    <button type="submit" class="btn btn-primary">Gravar</button>
+</form>

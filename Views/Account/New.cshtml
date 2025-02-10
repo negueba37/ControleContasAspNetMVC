@@ -53,6 +53,15 @@
 				Quantidade de parcelas
 				<input asp-for="Account.InstallmentQuantity" type="number" class="form-control" id="installment">
 			</label>
+			<label for="categoryId" class="form-label col-3">
+				Usuário
+				<select asp-for="Account.UserId" class="form-control" id="categoryId" aria-label="Selecione um cartão">
+					@foreach (var item in @Model.Users)
+					{
+						<option value="@item.Id">@item.Name</option>
+					}
+				</select>
+			</label>
 		</div>
 		<button type="submit" class="btn btn-primary">Gravar</button>
 	</form>
